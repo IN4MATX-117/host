@@ -58,30 +58,40 @@ const data: Info[] = [
     amount: 316,
     name: "Samueli, Henry",
     CIK: "0001201633",
+    forms: "4",
+    formlink: "https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml"
   },
   {
     id: "0000000001",
     amount: 242,
     name: "A",
     CIK: "0000000001",
+    forms: "4",
+    formlink: "https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml"
   },
   {
     id: "0000000002",
     amount: 837,
     name: "B",
     CIK: "0000000002",
+    forms: "4",
+    formlink: "https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml"
   },
   {
     id: "0000000003",
     amount: 874,
     name: "C",
     CIK: "0000000003",
+    forms: "4",
+    formlink: "https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml"
   },
   {
     id: "0000000004",
     amount: 721,
     name: "D",
     CIK: "0000000004",
+    forms: "4",
+    formlink: "https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml"
   },
 ]
  
@@ -90,6 +100,8 @@ export type Info = {
   amount: number
   name: string
   CIK: string
+  forms: string
+  formlink: string
 }
  
 export const columns: ColumnDef<Info>[] = [
@@ -146,6 +158,27 @@ export const columns: ColumnDef<Info>[] = [
       )
     },
     cell: ({ row }) => <div className="lowercase">{row.getValue("CIK")}</div>,
+  },
+  {
+    accessorKey: "forms",
+    header: "Forms",
+    cell: ({ row }) => {
+      return (
+        <div className="capitalize">
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="item-1">
+              <AccordionTrigger>{row.getValue("forms")}</AccordionTrigger>
+              <AccordionContent>
+              <a href="https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml" target="_blank" rel="noopener noreferrer">
+                {/* will change this to {row.getValue("formlink") later} */}
+                {row.getValue("forms")}
+              </a>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "amount",
