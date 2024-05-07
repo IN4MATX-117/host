@@ -51,6 +51,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import columns from './columns';
+import { DatePickerWithRange } from './date-range-picker';
 
 const data: Info[] = [
   {
@@ -159,6 +160,7 @@ export default function Home() {
       <div className="w-full">
       <div className="flex items-center py-4">
         <div className= "flex items-center py-4 space-x-2">
+          <DatePickerWithRange />
           <Input
             placeholder="Filter Name..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
