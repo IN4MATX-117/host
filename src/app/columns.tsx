@@ -9,6 +9,15 @@ import {
     AccordionTrigger,
   } from "@/components/ui/accordion"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+  } from "@/components/ui/select"
 
 const data: Info[] = [
     {
@@ -77,11 +86,22 @@ export const columns: ColumnDef<Info>[] = [
         />
       ),
       cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
+        // <Checkbox
+        //   checked={row.getIsSelected()}
+        //   onCheckedChange={(value) => row.toggleSelected(!!value)}
+        //   aria-label="Select row"
+        // />
+        <Select>
+            <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectItem value="confirmed">Confirmed</SelectItem>
+                {/* <SelectItem value="TBD">TBD</SelectItem> */}
+                <SelectItem value="Error">Error</SelectItem>
+            </SelectContent>
+        </Select>
+
       ),
       enableSorting: false,
       enableHiding: false,

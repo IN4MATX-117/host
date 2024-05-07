@@ -14,21 +14,6 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import React from "react";
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import {
   ColumnDef,
   ColumnFiltersState,
   SortingState,
@@ -52,6 +37,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import columns from './columns';
 import { DatePickerWithRange } from './date-range-picker';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const data: Info[] = [
   {
