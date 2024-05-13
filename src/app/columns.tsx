@@ -22,37 +22,22 @@ import { Info } from '../lib/data.ts';
 
 export const columns: ColumnDef<Info>[] = [
     {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
+      accessorKey: "Status",
+      enableSorting: false,
+      enableHiding: false,
       cell: ({ row }) => (
-        // <Checkbox
-        //   checked={row.getIsSelected()}
-        //   onCheckedChange={(value) => row.toggleSelected(!!value)}
-        //   aria-label="Select row"
-        // />
         <Select>
             <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
                 <SelectItem value="confirmed">Confirmed</SelectItem>
-                {/* <SelectItem value="TBD">TBD</SelectItem> */}
-                <SelectItem value="Error">Error</SelectItem>
+                <SelectItem value="Misidentified">Misidentified</SelectItem>
+                <SelectItem value="Unconfirmed">Unconfirmed</SelectItem>
             </SelectContent>
         </Select>
 
       ),
-      enableSorting: false,
-      enableHiding: false,
     },
     {
       accessorKey: "name",
