@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -42,7 +42,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { data } from '../lib/data.ts';
+// import { data } from '../lib/data.ts';
 
 export type Info = {
   id: string
@@ -54,6 +54,7 @@ export type Info = {
 }
 
 export default function Home() {
+  const [data, setData] = useState<Info[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -61,6 +62,20 @@ export default function Home() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/data');
+        const result = await response.json();
+        setData(result);
+      } catch (error) {
+        console.error('Error fetching data: ', error);
+      }
+    };
+
+    fetchData();
+  }, []);
  
   const table = useReactTable({
     data,
