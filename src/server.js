@@ -1,14 +1,16 @@
 const express = require('express');
 const mysql = require('mysql');
+const cors = require('cors');
 
 const app = express();
+app.use(cors());
 
 // MySQL Connection Configuration
 const connection = mysql.createConnection({
   host: 'localhost', // Change this to your MySQL host
-  user: 'root', // Change this to your MySQL username
-  password: 'password', // Change this to your MySQL password
-  database: 'your_database', // Change this to your MySQL database name
+  user: 'testuser', // Change this to your MySQL username
+  password: 'My6$Password', // Change this to your MySQL password
+  database: 'inf117', // Change this to your MySQL database name
 });
 
 // Connect to MySQL
@@ -24,7 +26,7 @@ connection.connect((err) => {
 
 // Example route to fetch data from MySQL
 app.get('/api/data', (req, res) => {
-  connection.query('SELECT * FROM your_table', (error, results) => {
+  connection.query('SELECT * FROM data', (error, results) => {
     if (error) {
       console.error('Error executing MySQL query:', error);
       res.status(500).json({ error: 'Error fetching data from MySQL' });
