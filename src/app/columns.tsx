@@ -10,6 +10,16 @@ import {
   } from "@/components/ui/accordion"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { Badge } from "@/components/ui/badge"
+import { Textarea } from "@/components/ui/textarea"
+import {
     Select,
     SelectContent,
     SelectGroup,
@@ -19,6 +29,15 @@ import {
     SelectValue,
   } from "@/components/ui/select"
 import { Info } from '../lib/data.ts';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 export const columns: ColumnDef<Info>[] = [
     {
@@ -53,7 +72,45 @@ export const columns: ColumnDef<Info>[] = [
         )
       },
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("name")}</div>
+        <Sheet>
+        <SheetTrigger>{row.getValue("name")}</SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Henry Samueli <Badge variant="outline">Confirmed</Badge></SheetTitle>
+            <SheetDescription>
+              Here is the bio for Henry Samueli
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Form Type</TableHead>
+                    <TableHead>Latest Filed Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>4</TableCell>
+                    <TableCell>2024/04/14</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>4</TableCell>
+                    <TableCell>2024/04/14</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>4</TableCell>
+                    <TableCell>2024/04/14</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>4</TableCell>
+                    <TableCell>2024/04/14</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+              Comments
+              <Textarea />
+            </SheetDescription>
+          </SheetHeader>
+        </SheetContent>
+      </Sheet>
       ),
     },
     {
@@ -70,6 +127,23 @@ export const columns: ColumnDef<Info>[] = [
         )
       },
       cell: ({ row }) => <div className="lowercase">{row.getValue("CIK")}</div>,
+    },
+    {
+      accessorKey: "Company",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Company
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("Company")}</div>
+      ),
     },
     {
       accessorKey: "forms",

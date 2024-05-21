@@ -4,6 +4,7 @@ export const data: Info[] = [
       amount: 316,
       name: "Samueli, Henry",
       CIK: "0001201633",
+      Company: "Random Company",
       forms: "4",
       formlink: "https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml"
     },
@@ -12,6 +13,7 @@ export const data: Info[] = [
       amount: 242,
       name: "A",
       CIK: "0000000001",
+      Company: "Random Company",
       forms: "4",
       formlink: "https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml"
     },
@@ -20,6 +22,7 @@ export const data: Info[] = [
       amount: 837,
       name: "B",
       CIK: "0000000002",
+      Company: "Random Company",
       forms: "4",
       formlink: "https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml"
     },
@@ -28,6 +31,7 @@ export const data: Info[] = [
       amount: 874,
       name: "C",
       CIK: "0000000003",
+      Company: "Random Company",
       forms: "4",
       formlink: "https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml"
     },
@@ -36,6 +40,7 @@ export const data: Info[] = [
       amount: 721,
       name: "D",
       CIK: "0000000004",
+      Company: "Random Company",
       forms: "4",
       formlink: "https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml"
     },
@@ -46,6 +51,7 @@ export const data: Info[] = [
     amount: number;
     name: string;
     CIK: string;
+    Company: string;
     forms: string;
     formlink: string;
   };
