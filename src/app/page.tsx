@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -34,7 +34,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import columns from './columns';
-import { DatePickerWithRange } from './date-range-picker';
+// import { DatePickerWithRange } from './date-range-picker';
 import {
   Select,
   SelectContent,
@@ -42,19 +42,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-// import { data } from '../lib/data.ts';
-
+import { data } from '../lib/data.ts';
 export type Info = {
-  id: string
-  amount: number
-  name: string
   CIK: string
+  status: string
+  name: string
+  company: string
   forms: string
-  formlink: string
+  mostrecent: string
+  amount: number
 }
 
 export default function Home() {
-  const [data, setData] = useState<Info[]>([]);
+  // const [data, setData] = useState<Info[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -63,19 +63,19 @@ export default function Home() {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/data');
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        console.error('Error fetching data: ', error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await fetch('http://localhost:5000/api/data');
+  //       const result = await response.json();
+  //       setData(result);
+  //     } catch (error) {
+  //       console.error('Error fetching data: ', error);
+  //     }
+  //   };
 
-    fetchData();
-  }, []);
+  //   fetchData();
+  // }, []);
  
   const table = useReactTable({
     data,
@@ -114,7 +114,6 @@ export default function Home() {
           </a>
         </div>
       </div>
-
       <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         UCI SEC TOOL
@@ -123,9 +122,16 @@ export default function Home() {
       <div className="w-full">
       <div className="flex items-center py-4">
         <div className= "flex items-center py-4 space-x-2">
-          <DatePickerWithRange />
           <Input
             placeholder="Filter Name..."
+            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("name")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <Input
+            placeholder="Filter Form Type..."
             value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
               table.getColumn("name")?.setFilterValue(event.target.value)
@@ -141,6 +147,30 @@ export default function Home() {
             className="max-w-sm"
           />
         </div>
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Status <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => table.getColumn("Status")?.setFilterValue("confirmed")}
+              >
+                Confirmed
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => table.getColumn("Status")?.setFilterValue("unconfirmed")}
+              >
+                Unconfirmed
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => table.getColumn("Status")?.setFilterValue("misidentified")}
+              >
+                Misidentified
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -221,7 +251,7 @@ export default function Home() {
       <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredRowModel().rows.length} row(s) marked confirmed.
         </div>
         <div className="space-x-2">
           <Button

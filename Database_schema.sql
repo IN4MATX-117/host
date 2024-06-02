@@ -1,4 +1,4 @@
-# the database schema that using to connect to the Frontend 
+-- the database schema that using to connect to the Frontend
 
 CREATE DATABASE IF NOT EXISTS Main_database;
 USE Main_database;
@@ -35,14 +35,7 @@ CREATE TABLE IF NOT EXISTS FilingLinks (
     FOREIGN KEY (CIK) REFERENCES Persons(CIK)
 );
 
+
 ALTER TABLE Persons
 ADD COLUMN Status VARCHAR(255) NULL;
 ALTER TABLE Persons MODIFY COLUMN Bio LONGTEXT NULL;
-
-
-#USE Main_database;
-#ALTER TABLE FilingLinks DROP FOREIGN KEY filinglinks_ibfk_1;
-#ALTER TABLE FilingLinks ADD CONSTRAINT FK_FilingLinks_Persons FOREIGN KEY (CIK) REFERENCES Persons(CIK);
-#DROP TABLE IF EXISTS UCI_Alumni;
-#SHOW TABLES;
-

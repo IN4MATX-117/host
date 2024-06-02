@@ -38,6 +38,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {TextareaForm} from './comment.tsx';
+
 
 export const columns: ColumnDef<Info>[] = [
     {
@@ -66,7 +77,7 @@ export const columns: ColumnDef<Info>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            name
+            Name
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         )
@@ -105,8 +116,7 @@ export const columns: ColumnDef<Info>[] = [
                   </TableRow>
                 </TableBody>
               </Table>
-              Comments
-              <Textarea />
+              <TextareaForm />
             </SheetDescription>
           </SheetHeader>
         </SheetContent>
@@ -158,13 +168,28 @@ export const columns: ColumnDef<Info>[] = [
                 <a href="https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml" target="_blank" rel="noopener noreferrer">
                   {/* will change this to {row.getValue("formlink") later} */}
                   {row.getValue("forms")}
-                </a>
+                </a> {/* 这里要写query，match到对应的form link */}
                 </AccordionContent>
               </AccordionItem>
             </Accordion>
           </div>
         );
       },
+    },
+    {
+      accessorKey: "date",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Most Recent Filing Date
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("Date")}</div>,
     },
     {
       accessorKey: "amount",

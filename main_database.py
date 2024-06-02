@@ -4,7 +4,7 @@
 # database: Database_schema
 # output: Persons.csv, FilingLinks.csv
 
-import mysql.connector
+import mysql.connector # type: ignore
 import csv
 # 读一个行就用fetch_cik_by_name("HENRY CHRISTIAN O") get the cik and insert into the database
 def process_file(file_path):
@@ -115,13 +115,13 @@ def process_and_store(file_path):
     src_connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='12345678',
+        password='Wjj030529!',
         database='CIK_Searching'
     )
     target_connection = mysql.connector.connect(
         host='localhost',
         user='root',
-        password='12345678',
+        password='Wjj030529!',
         database='Main_database'
     )
 
@@ -158,6 +158,6 @@ def process_and_store(file_path):
 
 
 if __name__ == "__main__":
-    file_path = 'XXX/full_names.csv' path need to be changed
+    file_path = './full_names.csv'
     process_and_store(file_path)
 
