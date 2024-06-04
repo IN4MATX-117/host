@@ -176,7 +176,7 @@ export const columns: ColumnDef<Info>[] = [
       cell: ({ row }) => <div className="lowercase">{row.getValue("date")}</div>,
     },
     {
-      accessorKey: "amount",
+      accessorKey: "Number of Shares",
       header: ({ column }) => {
         return (
           <div className = 'text-right'>
