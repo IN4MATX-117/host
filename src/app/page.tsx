@@ -111,12 +111,12 @@ export default function Home() {
           <Card x-chunk="dashboard-01-chunk-0">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Filter Name...
+                Search by Name
               </CardTitle>
             </CardHeader>
             <CardContent>
             <Input
-              placeholder="Filter Name..."
+              placeholder="eg. Henry Samueli"
               value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
               onChange={(event) =>
                 table.getColumn("name")?.setFilterValue(event.target.value)
@@ -128,12 +128,12 @@ export default function Home() {
           <Card x-chunk="dashboard-01-chunk-1">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Filter Form Type...
+                Search by Form Type
               </CardTitle>
             </CardHeader>
             <CardContent>
               <Input
-                placeholder="Filter Form Type..."
+                placeholder="eg. 4"
                 value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                 onChange={(event) =>
                   table.getColumn("name")?.setFilterValue(event.target.value)
@@ -145,12 +145,12 @@ export default function Home() {
           <Card x-chunk="dashboard-01-chunk-2">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Filter CIK...
+                Search by CIK...
               </CardTitle>
             </CardHeader>
             <CardContent>
             <Input
-              placeholder="Filter CIK..."
+              placeholder="eg. 0001201633"
               value={(table.getColumn("CIK")?.getFilterValue() as string) ?? ""}
               onChange={(event) =>
                 table.getColumn("CIK")?.setFilterValue(event.target.value)
@@ -161,7 +161,7 @@ export default function Home() {
           </Card>
           <Card x-chunk="dashboard-01-chunk-3">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+              <CardTitle className="text-sm font-medium">Filter by</CardTitle>
             </CardHeader>
             <CardContent>
             <DropdownMenu>

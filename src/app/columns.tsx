@@ -94,25 +94,21 @@ export const columns: ColumnDef<Info>[] = [
                 <TableHeader>
                   <TableRow>
                     <TableHead>Form Type</TableHead>
-                    <TableHead>Latest Filed Date</TableHead>
+                    <TableHead>Filed Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow>
                     <TableCell>4</TableCell>
-                    <TableCell>2024/04/14</TableCell>
+                    <TableCell>2023-03-01</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>4</TableCell>
-                    <TableCell>2024/04/14</TableCell>
+                    <TableCell>8-K</TableCell>
+                    <TableCell>2023-03-01</TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell>4</TableCell>
-                    <TableCell>2024/04/14</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>4</TableCell>
-                    <TableCell>2024/04/14</TableCell>
+                    <TableCell>10-K</TableCell>
+                    <TableCell>2023-03-01</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -160,19 +156,7 @@ export const columns: ColumnDef<Info>[] = [
       header: "Forms",
       cell: ({ row }) => {
         return (
-          <div className="capitalize">
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-1">
-                <AccordionTrigger>{row.getValue("forms")}</AccordionTrigger>
-                <AccordionContent>
-                <a href="https://www.sec.gov/Archives/edgar/data/1730168/000110465924048357/xslF345X05/tm2412068-1_4seq1.xml" target="_blank" rel="noopener noreferrer">
-                  {/* will change this to {row.getValue("formlink") later} */}
-                  {row.getValue("forms")}
-                </a> {/* 这里要写query，match到对应的form link */}
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </div>
+          <div className="capitalize">{row.getValue("forms")}</div>
         );
       },
     },
@@ -189,7 +173,7 @@ export const columns: ColumnDef<Info>[] = [
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("Date")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("date")}</div>,
     },
     {
       accessorKey: "amount",
