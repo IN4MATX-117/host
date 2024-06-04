@@ -13,9 +13,9 @@ connection_string = f'mysql+pymysql://{username}:{password}@{host}/{database}'
 # Create an engine
 engine = create_engine(connection_string)
 
-# Read the files
-full_names_uml = '/Users/christy/Desktop/full_names_data.csv'
-related_forms_uml = "/Users/christy/Desktop/related_forms_data.csv"
+# Read the files:  changing the path 
+full_names_uml = '/XXX/full_names_data.csv'
+related_forms_uml = "/XXX/related_forms_data.csv"
 
 full_names_data = pd.read_csv(full_names_uml)
 related_forms_data = pd.read_csv(related_forms_uml)
