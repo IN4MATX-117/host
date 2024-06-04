@@ -184,7 +184,7 @@ export const columns: ColumnDef<Info>[] = [
               variant="ghost"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              Amount
+              Number of Shares
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -194,12 +194,12 @@ export const columns: ColumnDef<Info>[] = [
         const amount = parseFloat(row.getValue("amount"))
    
         // Format the amount as a dollar amount
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(amount)
+        // const formatted = new Intl.NumberFormat("en-US", {
+        //   style: "currency",
+        //   currency: "USD",
+        // }).format(amount)
    
-        return <div className="text-right font-medium">{formatted}</div>
+        return <div className="text-right font-medium">{amount}</div>
       },
     },
     // {
