@@ -132,7 +132,11 @@ export const columns: ColumnDef<Info>[] = [
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("CIK")}</div>,
+      cell: ({ row }) => 
+        <div className="lowercase">
+          <Button variant="ghost" 
+          onClick={() => navigator.clipboard.writeText(row.getValue("CIK"))}>{row.getValue("CIK")}</Button>
+          </div>
     },
     {
       accessorKey: "Company",

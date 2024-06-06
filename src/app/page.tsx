@@ -134,9 +134,9 @@ export default function Home() {
             <CardContent>
               <Input
                 placeholder="eg. 4"
-                value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+                value={(table.getColumn("forms")?.getFilterValue() as string) ?? ""}
                 onChange={(event) =>
-                  table.getColumn("name")?.setFilterValue(event.target.value)
+                  table.getColumn("forms")?.setFilterValue(event.target.value)
                 }
                 className="max-w-sm"
               />
