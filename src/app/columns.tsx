@@ -164,7 +164,7 @@ export const columns: ColumnDef<Info>[] = [
       cell: ({ row }) => <div className="lowercase">{row.getValue("date")}</div>,
     },
     {
-      accessorKey: "Number of Shares",
+      accessorKey: "amount",
       header: ({ column }) => {
         return (
           <div className = 'text-right'>
@@ -172,7 +172,7 @@ export const columns: ColumnDef<Info>[] = [
               variant="ghost"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              Number of Shares
+              Shares Amount
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           </div>

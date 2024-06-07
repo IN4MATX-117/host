@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
+import React, {useState} from "react";
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -43,6 +43,12 @@ export function TextareaForm() {
 // 在这里要改成让他留在页面上，或许重新想想怎么设计界面吧
 
 
+  const [displayComment, setDisplayComment] = useState(false);
+
+  function handleClick() {
+    setDisplayComment(true);
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
@@ -53,17 +59,26 @@ export function TextareaForm() {
             <FormItem>
               <FormLabel>Comments</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="You can input your comments for this person here"
-                  className="resize-none"
-                  {...field}
-                />
+                {displayComment ? (
+                  <div>
+                    {field.value}
+                  </div>
+                ) : (
+                  <Textarea
+                    placeholder="You can input your comments for this person here"
+                    className="resize-none"
+                    {...field}
+                  />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" onClick={handleClick}>
+          Save
+        </Button>
+        <Button onClick={() => setDisplayComment(false)}>Edit</Button>
       </form>
     </Form>
   )
