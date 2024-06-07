@@ -2,12 +2,6 @@ import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-  } from "@/components/ui/accordion"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import {
   Sheet,
@@ -18,7 +12,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
-import { Textarea } from "@/components/ui/textarea"
 import {
     Select,
     SelectContent,
@@ -38,15 +31,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import {TextareaForm} from './comment.tsx';
 
 
@@ -87,7 +71,7 @@ export const columns: ColumnDef<Info>[] = [
         <SheetTrigger>{row.getValue("name")}</SheetTrigger>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Henry Samueli <Badge variant="outline">Confirmed</Badge></SheetTitle>
+            <SheetTitle>Henry Samueli<Badge variant="outline">Confirmed</Badge></SheetTitle>
             <SheetDescription>
               Here is the bio for Henry Samueli
               <Table>
@@ -132,7 +116,11 @@ export const columns: ColumnDef<Info>[] = [
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("CIK")}</div>,
+      cell: ({ row }) => 
+        <div className="lowercase">
+          <Button variant="ghost" 
+          onClick={() => navigator.clipboard.writeText(row.getValue("CIK"))}>{row.getValue("CIK")}</Button>
+          </div>
     },
     {
       accessorKey: "Company",
@@ -176,7 +164,7 @@ export const columns: ColumnDef<Info>[] = [
       cell: ({ row }) => <div className="lowercase">{row.getValue("date")}</div>,
     },
     {
-      accessorKey: "Number of Shares",
+      accessorKey: "amount",
       header: ({ column }) => {
         return (
           <div className = 'text-right'>
@@ -184,7 +172,7 @@ export const columns: ColumnDef<Info>[] = [
               variant="ghost"
               onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             >
-              Number of Shares
+              Shares Amount
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -192,13 +180,12 @@ export const columns: ColumnDef<Info>[] = [
       },
       cell: ({ row }) => {
         const amount = parseFloat(row.getValue("amount"))
-   
         // Format the amount as a dollar amount
         // const formatted = new Intl.NumberFormat("en-US", {
         //   style: "currency",
         //   currency: "USD",
         // }).format(amount)
-   
+  
         return <div className="text-right font-medium">{amount}</div>
       },
     },
