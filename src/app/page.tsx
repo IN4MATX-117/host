@@ -1,17 +1,6 @@
 'use client'
 import Link from "next/link"
-import {
-  Activity,
-  ArrowUpRight,
-  CircleUser,
-  CreditCard,
-  DollarSign,
-  Menu,
-  Package2,
-  Search,
-  Users,
-} from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -30,7 +19,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import {
   Table,
   TableBody,
@@ -55,6 +43,7 @@ import {
 import columns from './columns';
 import React, {useState} from "react";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export type Info = {
   CIK: string
@@ -187,52 +176,56 @@ export default function Home() {
                         {column.id}
                       </DropdownMenuCheckboxItem>
                     )
-                  })}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="ml-auto">
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>  
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="ml-auto">
                     Status <ChevronDown className="ml-2 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onClick={() => table.getColumn("Status")?.setFilterValue("confirmed")}
-                  >
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                    onClick={() => {
+                      const filterValue = table.getColumn("Status")?.getFilterValue() === "Confirmed" ? "" : "Confirmed";
+                      table.getColumn("Status")?.setFilterValue(filterValue);
+                    }}
+                    >
                     Confirmed
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => table.getColumn("Status")?.setFilterValue("unconfirmed")}
-                  >
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                    onClick={() => {
+                      const filterValue = table.getColumn("Status")?.getFilterValue() === "Unconfirmed" ? "" : "Unconfirmed";
+                      table.getColumn("Status")?.setFilterValue(filterValue);
+                    }}
+                    >
                     Unconfirmed
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => table.getColumn("Status")?.setFilterValue("misidentified")}
-                  >
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                    onClick={() => {
+                      const filterValue = table.getColumn("Status")?.getFilterValue() === "Misidentified" ? "" : "Misidentified";
+                      table.getColumn("Status")?.setFilterValue(filterValue);
+                    }}
+                    >
                     Misidentified
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </CardContent>
-          </Card>
-        </div>
-        <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
-          <Card
-            className="xl:col-span-4" x-chunk="dashboard-01-chunk-4"
-          >
-            <CardHeader className="flex flex-row items-center">
-              <div className="grid gap-2">
-                <CardTitle>Table of UCI Alumni</CardTitle>
-                <CardDescription>Click on the name to open individual page.</CardDescription>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                  </DropdownMenu>
+                </CardContent>
+                </Card>
               </div>
-            </CardHeader>
-            <CardContent>
-            <Table>
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
+                <Tabs defaultValue="Table of UCI Alumni">
+                <TabsList>
+                  <TabsTrigger value="Table of UCI Alumni">Table of UCI Alumni</TabsTrigger>
+                  <TabsTrigger value="BadDataTable">Partial Name Table</TabsTrigger>
+                </TabsList>
+                <div className="grid gap-4 md:gap-8 lg:grid-cols-1 xl:grid-cols-1">
+                <TabsContent value="Table of UCI Alumni">
+                <Table>
+                  <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id}>
                     {headerGroup.headers.map((header) => {
                       return (
                         <TableHead key={header.id}>
@@ -277,11 +270,34 @@ export default function Home() {
                 )}
               </TableBody>
             </Table>
-            </CardContent>
-          </Card>
-        </div>
+              </TabsContent>
+            <TabsContent value="BadDataTable">
+            <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Partial Name</TableHead>
+                    <TableHead>Bio Sentence</TableHead>
+                    <TableHead>DEF14A URL</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell>ABC</TableCell>
+                    <TableCell>ABC is a uci alumni</TableCell>
+                    <TableCell>http</TableCell>
+                  </TableRow>
+                  <TableRow>
+                  <TableCell>ABC</TableCell>
+                    <TableCell>ABC is a uci alumni</TableCell>
+                    <TableCell>http</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TabsContent>
+            </div>
+          </Tabs>
       </main>
       </div>
-    </div>
+     </div>
   )
 }
