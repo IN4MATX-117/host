@@ -1,6 +1,5 @@
 'use client'
 import Link from "next/link"
-
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -22,12 +21,15 @@ import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { data } from '../lib/data.ts';
+import { data, Info } from '../lib/data.ts';
+import { badData, BadInfo } from '../lib/badData.ts';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -45,15 +47,6 @@ import React, {useState} from "react";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export type Info = {
-  CIK: string
-  status: string
-  name: string
-  company: string
-  forms: string
-  mostrecent: string
-  amount: number
-}
 
 export default function Home() {
   // const [data, setData] = useState<Info[]>([]);
@@ -83,6 +76,7 @@ export default function Home() {
       rowSelection,
     },
   })
+
   return (
     <div className="grid min-h-screen w-full ">
       <div className="flex flex-col">
@@ -272,25 +266,25 @@ export default function Home() {
             </Table>
               </TabsContent>
             <TabsContent value="BadDataTable">
-            <Table>
+              <Table>
+                <TableCaption>A list of partial names.</TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Partial Name</TableHead>
-                    <TableHead>Bio Sentence</TableHead>
-                    <TableHead>DEF14A URL</TableHead>
+                    <TableHead>Bio</TableHead>
+                    <TableHead className="text-right">URL</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>ABC</TableCell>
-                    <TableCell>ABC is a uci alumni</TableCell>
-                    <TableCell>http</TableCell>
-                  </TableRow>
-                  <TableRow>
-                  <TableCell>ABC</TableCell>
-                    <TableCell>ABC is a uci alumni</TableCell>
-                    <TableCell>http</TableCell>
-                  </TableRow>
+                  {badData.map((badData) => (
+                    <TableRow key={badData.id}>
+                      <TableCell>{badData.name}</TableCell>
+                      <TableCell>{badData.bio}</TableCell>
+                      <TableCell className="text-right">
+                        <a href={badData.URL}>{badData.form}</a>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </TabsContent>
