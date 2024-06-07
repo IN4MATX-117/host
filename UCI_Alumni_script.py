@@ -3,11 +3,13 @@ import pymysql
 import re
 from sqlalchemy import create_engine, text
 
+# Make sure to download the latest release of all the packages
+
 # Connecting with MySQL
-username = 'root'
-password = '12345678'
-host = '127.0.0.1'
-database = 'UCI_Alumni'
+username = 'mytestuser'
+password = 'My6$Password'
+host = 'localhost'
+database = 'uci_alumni'
 connection_string = f'mysql+pymysql://{username}:{password}@{host}/{database}'
 
 # Create an engine
@@ -49,7 +51,7 @@ persons_updated = False
 
 # Insert the new unique data into the Persons table
 if not new_unique_persons_entries.empty:
-    new_unique_persons_entries[["Personal_CIK", "Name", "Parsing_name", 'Company_CIK', 'Bio', 'UML', 'NumberOfShares', 'Note', 'Status', 'WithName']].to_sql('Persons', con=engine, index=False, if_exists='append')
+    new_unique_persons_entries[["Personal_CIK", "Name", "Parsing_name", 'Company_CIK', 'Bio', 'UML', 'NumberOfShares', 'Note', 'Status', 'WithName']].to_sql('persons', con=engine, index=False, if_exists='append')
     print("Persons: New unique data inserted successfully.")
     persons_updated = True
 else:
@@ -65,7 +67,7 @@ with engine.connect() as connection:
 
 
         if not full_names_data.empty:
-            full_names_data[['Personal_CIK', 'StockType', 'SharePrice', 'TransactionType']].to_sql('Fillings', con=engine, index=False, if_exists='append')
+            full_names_data[['Personal_CIK', 'StockType', 'SharePrice', 'TransactionType']].to_sql('fillings', con=engine, index=False, if_exists='append')
             print("Data successfully inserted into Fillings.")
         else:
             print("No new data to insert into Fillings.")
@@ -89,7 +91,7 @@ merged_fillinglinks_data = pd.merge(related_forms_data, existing_fillinglinks_pa
 new_unique_fillinglinks_entries = merged_fillinglinks_data[merged_fillinglinks_data['_merge'] == 'left_only'].drop(columns=['_merge'])
 
 if not new_unique_fillinglinks_entries.empty:
-    new_unique_fillinglinks_entries[["personal_cik", 'SECFormType', 'FilingDate', 'Link']].to_sql('FillingLinks', con=engine, index=False, if_exists='append')
+    new_unique_fillinglinks_entries[["personal_cik", 'SECFormType', 'FilingDate', 'Link']].to_sql('fillinglinks', con=engine, index=False, if_exists='append')
     print("Filling Link: New data inserted successfully.")
 else:
     print("Filling Link: No new data to insert.")
@@ -109,5 +111,5 @@ final_data = merged_data[['normalized_Company_CIK', 'Company_name', 'ticker']].r
     'ticker': 'StockTicker'
 })
 final_data.drop_duplicates(inplace=True)
-final_data.to_sql('Company', con=engine, index=False, if_exists='replace')
+final_data.to_sql('company', con=engine, index=False, if_exists='replace')
 print("Data successfully inserted into the Company table.")
