@@ -10,7 +10,7 @@ const connection = mysql.createConnection({
   host: 'localhost', // Change this to your MySQL host
   user: 'testuser', // Change this to your MySQL username
   password: 'My6$Password', // Change this to your MySQL password
-  database: 'inf117', // Change this to your MySQL database name
+  database: 'uci_alumni', // Change this to your MySQL database name
 });
 
 // Connect to MySQL
@@ -26,7 +26,24 @@ connection.connect((err) => {
 
 // Example route to fetch data from MySQL
 app.get('/api/data', (req, res) => {
-  connection.query('SELECT * FROM data', (error, results) => {
+
+  const query = `
+    SELECT 
+        P.ID AS id, 
+        P.Personal_CIK AS CIK, 
+        P.Name AS name, 
+        P.NumberOfShares AS amount,
+        C.Company_name AS Company, 
+        GROUP_CONCAT(F.SECFormType) AS forms,
+        MAX(F.FilingDate) AS date
+    FROM persons P
+    LEFT JOIN fillinglinks F ON P.Personal_CIK = F.Personal_CIK
+    LEFT JOIN company C ON P.Company_CIK = C.Company_CIK
+    WHERE P.WithName = 'Yes'
+    GROUP BY P.ID, P.Personal_CIK, P.Name, C.Company_name;
+  `;
+
+  connection.query(query, (error, results) => {
     if (error) {
       console.error('Error executing MySQL query:', error);
       res.status(500).json({ error: 'Error fetching data from MySQL' });
