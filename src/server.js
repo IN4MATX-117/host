@@ -9,7 +9,7 @@ app.use(cors());
 const connection = mysql.createConnection({
   host: 'localhost', // Change this to your MySQL host
   user: 'root', // Change this to your MySQL username
-  password: '', // Change this to your MySQL password
+  password: 'Wjj030529!', // Change this to your MySQL password
   database: 'uci_alumni', // Change this to your MySQL database name
 });
 
@@ -54,7 +54,7 @@ app.get('/api/data', (req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
