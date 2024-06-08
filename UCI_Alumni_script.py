@@ -14,9 +14,9 @@ connection_string = f'mysql+pymysql://{username}:{password}@{host}/{database}'
 engine = create_engine(connection_string)
 
 # Read the files
-full_names_uml = '/Users/christy/Desktop/full_names_data.csv'
-related_forms_uml = "/Users/christy/Desktop/related_forms_data.csv"
-cik_data_path = '/Users/christy/Desktop/cik-lookup-data.txt'
+full_names_uml = '/XXX/full_names_data.csv'
+related_forms_uml = "/XXX/related_forms_data.csv"
+cik_data_path = '/XXX/cik-lookup-data.txt'
 
 full_names_data = pd.read_csv(full_names_uml)
 related_forms_data = pd.read_csv(related_forms_uml)
@@ -119,7 +119,7 @@ else:
     print("Filling Link: No new data to insert.")
 
 # Company
-
+'''
 related_forms_data['extracted_cik'] = related_forms_data['companyNameLong'].apply(
     lambda x: re.findall(r'\(CIK (\d+)\)', x)[0] if re.search(r'\(CIK \d+\)', x) else None
 )
@@ -137,6 +137,7 @@ final_data.drop_duplicates(inplace=True)
 final_data.to_sql('Company', con=engine, index=False, if_exists='replace')
 print("Data successfully inserted into the Company table.")
 
+'''
 # Company
 
 # Fetch CIK_Search data from the database
@@ -158,10 +159,8 @@ if not merged_data.empty:
     # Rename columns and drop duplicates
     company_data = merged_data[['Company_CIK', 'Company_name']]
     company_data = company_data.drop_duplicates()
-
-    # Insert into the Company table, avoiding duplicates
-    company_data.to_sql('Company', con=engine, index=False, if_exists='replace')
+    company_data['StockTicker'] = None
+    company_data[['Company_CIK', 'Company_name', 'StockTicker']].to_sql('Company', con=engine, index=False, if_exists='replace')
     print("Company: Data merged and inserted successfully.")
 else:
     print("Company: No data to merge or insert.")
-
