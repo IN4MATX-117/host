@@ -34,7 +34,7 @@ app.get('/api/data', (req, res) => {
         P.Name AS name, 
         P.NumberOfShares AS amount,
         C.Company_name AS Company, 
-        GROUP_CONCAT(F.SECFormType) AS forms,
+        GROUP_CONCAT(DISTINCT F.SECFormType) AS forms,
         MAX(F.FilingDate) AS date
     FROM persons P
     LEFT JOIN fillinglinks F ON P.Personal_CIK = F.Personal_CIK
