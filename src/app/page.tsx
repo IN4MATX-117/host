@@ -43,13 +43,20 @@ import {
   useReactTable,
 } from "@tanstack/react-table"
 import columns from './columns';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 export default function Home() {
-  // const [data, setData] = useState<Info[]>([]);
+  const [data, setData] = useState<Info[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -57,6 +64,23 @@ export default function Home() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch('http://localhost:5000/api/data');
+      const result = await response.json();
+
+      // Format dates
+      const formattedData = result.map(item => ({
+        ...item,
+        date: formatDate(item.date),
+      }));
+
+      setData(formattedData);
+    }
+    fetchData();
+  }, []);
 
   const table = useReactTable({
     data,
@@ -74,8 +98,11 @@ export default function Home() {
       columnFilters,
       columnVisibility,
       rowSelection,
+      pagination,
     },
-  })
+
+    onPaginationChange: setPagination,
+  });
 
   return (
     <div className="grid min-h-screen w-full ">
@@ -215,83 +242,108 @@ export default function Home() {
                   <TabsTrigger value="BadDataTable">Partial Name Table</TabsTrigger>
                 </TabsList>
                 <div className="grid gap-4 md:gap-8 lg:grid-cols-1 xl:grid-cols-1">
-                <TabsContent value="Table of UCI Alumni">
-                <Table>
-                  <TableHeader>
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
-                              )}
-                        </TableHead>
-                      )
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-              </TabsContent>
-            <TabsContent value="BadDataTable">
-              <Table>
-                <TableCaption>A list of partial names.</TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Partial Name</TableHead>
-                    <TableHead>Bio</TableHead>
-                    <TableHead className="text-right">URL</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {badData.map((badData) => (
-                    <TableRow key={badData.id}>
-                      <TableCell>{badData.name}</TableCell>
-                      <TableCell>{badData.bio}</TableCell>
-                      <TableCell className="text-right">
-                        <a href={badData.URL}>{badData.form}</a>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TabsContent>
-            </div>
-          </Tabs>
-      </main>
+                  <TabsContent value="Table of UCI Alumni">
+                    <Table>
+                      <TableHeader>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow key={headerGroup.id}>
+                              {headerGroup.headers.map((header) => {
+                                return (
+                                    <TableHead key={header.id}>
+                                      {header.isPlaceholder
+                                          ? null
+                                          : flexRender(
+                                              header.column.columnDef.header,
+                                              header.getContext()
+                                          )}
+                                    </TableHead>
+                                )
+                              })}
+                            </TableRow>
+                        ))}
+                      </TableHeader>
+                      <TableBody>
+                        {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                                <TableRow
+                                    key={row.id}
+                                    data-state={row.getIsSelected() && "selected"}
+                                >
+                                  {row.getVisibleCells().map((cell) => (
+                                      <TableCell key={cell.id}>
+                                        {flexRender(
+                                            cell.column.columnDef.cell,
+                                            cell.getContext()
+                                        )}
+                                      </TableCell>
+                                  ))}
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                              <TableCell
+                                  colSpan={columns.length}
+                                  className="h-24 text-center"
+                              >
+                                No results.
+                              </TableCell>
+                            </TableRow>
+                        )}
+                      </TableBody>
+                    </Table>
+                    <div className="flex items-center justify-end py-2">
+                      <Button onClick={() => table.previousPage()}
+                              disabled={!table.getCanPreviousPage()}>
+                        Previous
+                      </Button>
+                      <span className="mx-2">
+                    Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+                  </span>
+                      <Button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+                        Next
+                      </Button>
+                      <select
+                          className="ml-4"
+                          value={table.getState().pagination.pageSize}
+                          onChange={e => {
+                            table.setPageSize(Number(e.target.value));
+                          }}
+                      >
+                        {[10, 20, 30, 40, 50].map(size => (
+                            <option key={size} value={size}>
+                              Show {size}
+                            </option>
+                        ))}
+                      </select>
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="BadDataTable">
+                    <Table>
+                      <TableCaption>A list of partial names.</TableCaption>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Partial Name</TableHead>
+                          <TableHead>Bio</TableHead>
+                          <TableHead className="text-right">URL</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {badData.map((badData) => (
+                            <TableRow key={badData.id}>
+                              <TableCell>{badData.name}</TableCell>
+                              <TableCell>{badData.bio}</TableCell>
+                              <TableCell className="text-right">
+                                <a href={badData.URL}>{badData.form}</a>
+                              </TableCell>
+                            </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TabsContent>
+                </div>
+                </Tabs>
+        </main>
       </div>
-     </div>
+    </div>
   )
 }
