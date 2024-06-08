@@ -6,8 +6,8 @@ from sqlalchemy import create_engine, text
 # Make sure to download the latest release of all the packages
 
 # Connecting with MySQL
-username = 'mytestuser'
-password = 'My6$Password'
+username = 'root'
+password = ''
 host = 'localhost'
 database = 'uci_alumni'
 connection_string = f'mysql+pymysql://{username}:{password}@{host}/{database}'
@@ -16,8 +16,8 @@ connection_string = f'mysql+pymysql://{username}:{password}@{host}/{database}'
 engine = create_engine(connection_string)
 
 # Read the files:  changing the path 
-full_names_uml = '/XXX/full_names_data.csv'
-related_forms_uml = "/XXX/related_forms_data.csv"
+full_names_uml = '/Users/wangjingjing/host/full_names_data.csv'
+related_forms_uml = "/Users/wangjingjing/host/related_forms_data.csv"
 
 full_names_data = pd.read_csv(full_names_uml)
 related_forms_data = pd.read_csv(related_forms_uml)
@@ -111,5 +111,5 @@ final_data = merged_data[['normalized_Company_CIK', 'Company_name', 'ticker']].r
     'ticker': 'StockTicker'
 })
 final_data.drop_duplicates(inplace=True)
-final_data.to_sql('company', con=engine, index=False, if_exists='replace')
+final_data.to_sql('Company', con=engine, index=False, if_exists='replace')
 print("Data successfully inserted into the Company table.")

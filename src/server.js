@@ -8,8 +8,8 @@ app.use(cors());
 // MySQL Connection Configuration
 const connection = mysql.createConnection({
   host: 'localhost', // Change this to your MySQL host
-  user: 'testuser', // Change this to your MySQL username
-  password: 'My6$Password', // Change this to your MySQL password
+  user: 'root', // Change this to your MySQL username
+  password: '', // Change this to your MySQL password
   database: 'uci_alumni', // Change this to your MySQL database name
 });
 

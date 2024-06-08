@@ -47,7 +47,7 @@ import React, {useEffect, useState} from "react";
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-function formatDate(dateString) {
+function formatDate(dateString: string | number | Date) {
   const date = new Date(dateString);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -72,7 +72,7 @@ export default function Home() {
       const result = await response.json();
 
       // Format dates
-      const formattedData = result.map(item => ({
+      const formattedData = result.map((item: { date: any }) => ({
         ...item,
         date: formatDate(item.date),
       }));
@@ -323,18 +323,14 @@ export default function Home() {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Partial Name</TableHead>
-                          <TableHead>Bio</TableHead>
-                          <TableHead className="text-right">URL</TableHead>
+                          <TableHead className="text-right">Bio</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
                         {badData.map((badData) => (
                             <TableRow key={badData.id}>
-                              <TableCell>{badData.name}</TableCell>
-                              <TableCell>{badData.bio}</TableCell>
-                              <TableCell className="text-right">
-                                <a href={badData.URL}>{badData.form}</a>
-                              </TableCell>
+                              <TableCell><a href={badData.URL}>{badData.name}</a></TableCell>
+                              <TableCell className="text-right">{badData.bio}</TableCell>
                             </TableRow>
                         ))}
                       </TableBody>
