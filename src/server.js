@@ -44,6 +44,8 @@ app.get('/api/data', (req, res) => {
   `;
 
   connection.query(query, (error, results) => {
+    // Print which query is being executed
+    console.log('Executing MySQL query:', query)
     if (error) {
       console.error('Error executing MySQL query:', error);
       res.status(500).json({ error: 'Error fetching data from MySQL' });
