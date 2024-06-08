@@ -63,7 +63,6 @@ app.get('/api/partial-names', (req, res) => {
         P.Personal_CIK AS CIK, 
         P.Name AS name, 
         P.Bio AS bio, 
-        F.SECFormType AS form, 
         P.UML AS URL
     FROM persons P
     LEFT JOIN fillinglinks F ON P.Personal_CIK = F.Personal_CIK
