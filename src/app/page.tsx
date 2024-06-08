@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { data, Info } from '../lib/data.ts';
+import { Info } from '../lib/data.ts';
 import { badData, BadInfo } from '../lib/badData.ts';
 import {
   ColumnDef,
@@ -57,6 +57,7 @@ function formatDate(dateString) {
 
 export default function Home() {
   const [data, setData] = useState<Info[]>([]);
+  const [badData, setBadData] = useState<BadInfo[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -66,6 +67,7 @@ export default function Home() {
   const [rowSelection, setRowSelection] = React.useState({})
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
+  // Fetch data
   useEffect(() => {
     async function fetchData() {
       const response = await fetch('http://localhost:5000/api/data');
@@ -80,6 +82,16 @@ export default function Home() {
       setData(formattedData);
     }
     fetchData();
+  }, []);
+
+  // Fetch bad data
+  useEffect(() => {
+    async function fetchBadData() {
+      const response = await fetch('http://localhost:5000/api/partial-names');
+      const result = await response.json();
+      setBadData(result);
+    }
+    fetchBadData();
   }, []);
 
   const table = useReactTable({
