@@ -28,7 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { data, Info } from '../lib/data.ts';
+import { Info } from '../lib/data.ts';
 import { badData, BadInfo } from '../lib/badData.ts';
 import {
   ColumnDef,
@@ -68,7 +68,7 @@ export default function Home() {
 
   useEffect(() => {
     async function fetchData() {
-      const response = await fetch('http://localhost:5000/api/data');
+      const response = await fetch('http://localhost:5001/api/data');
       const result = await response.json();
 
       // Format dates
