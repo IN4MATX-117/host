@@ -87,9 +87,9 @@ export const columns: ColumnDef<Info>[] = [
         <SheetTrigger><Button variant="link">{row.getValue("name")}</Button></SheetTrigger>
         <SheetContent>
           <SheetHeader>
-            <SheetTitle>Henry Samueli<Badge variant="outline">Confirmed</Badge></SheetTitle>
+            <SheetTitle>{row.getValue("name")}<Badge variant="outline">{row.getValue("status")}</Badge></SheetTitle>
             <SheetDescription>
-              Here is the bio for Henry Samueli
+              {row.getValue("bio")}
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -98,18 +98,12 @@ export const columns: ColumnDef<Info>[] = [
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  <TableRow>
-                    <TableCell>4</TableCell>
-                    <TableCell>2023-03-01</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>8-K</TableCell>
-                    <TableCell>2023-03-01</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>10-K</TableCell>
-                    <TableCell>2023-03-01</TableCell>
-                  </TableRow>
+                {row.original.formList.map((form) => (
+                    <TableRow key={form.id}>
+                      <TableCell><a href={form.URL}>{form.type}</a></TableCell>
+                      <TableCell>{form.filingDate}</TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
               <TextareaForm />
