@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
@@ -13,8 +12,6 @@ import {
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -23,7 +20,6 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -31,7 +27,6 @@ import {
 import { Info } from '../lib/data.ts';
 import { badData, BadInfo } from '../lib/badData.ts';
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -44,7 +39,7 @@ import {
 } from "@tanstack/react-table"
 import columns from './columns';
 import React, {useEffect, useState} from "react";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 function formatDate(dateString: string | number | Date) {
@@ -57,15 +52,15 @@ function formatDate(dateString: string | number | Date) {
 
 export default function Home() {
   const [data, setData] = useState<Info[]>([]);
+  const [badData, setBadData] = useState<BadInfo[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
+  const [badDataPagination, setBadDataPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
+  // Fetch data
   useEffect(() => {
     async function fetchData() {
       const response = await fetch('http://localhost:5001/api/data');
@@ -80,6 +75,16 @@ export default function Home() {
       setData(formattedData);
     }
     fetchData();
+  }, []);
+
+  // Fetch bad data
+  useEffect(() => {
+    async function fetchBadData() {
+      const response = await fetch('http://localhost:5000/api/partial-names');
+      const result = await response.json();
+      setBadData(result);
+    }
+    fetchBadData();
   }, []);
 
   const table = useReactTable({
@@ -102,6 +107,27 @@ export default function Home() {
     },
 
     onPaginationChange: setPagination,
+  });
+
+  const badDataTable = useReactTable({
+    data: badData,
+    columns: [
+      {
+        accessorKey: 'name',
+        header: 'Partial Name',
+      },
+      {
+        accessorKey: 'bio',
+        header: 'Bio',
+        cell: info => info.getValue(),
+      },
+    ],
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    state: {
+      pagination: badDataPagination,
+    },
+    onPaginationChange: setBadDataPagination,
   });
 
   return (
@@ -199,7 +225,7 @@ export default function Home() {
                     )
                     })}
                   </DropdownMenuContent>
-                </DropdownMenu>  
+                </DropdownMenu>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="ml-auto">
@@ -327,14 +353,47 @@ export default function Home() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {badData.map((badData) => (
-                            <TableRow key={badData.id}>
-                              <TableCell><a href={badData.URL}>{badData.name}</a></TableCell>
-                              <TableCell className="text-right">{badData.bio}</TableCell>
+                        {badDataTable.getRowModel().rows?.length ? (
+                          badDataTable.getRowModel().rows.map((row) => (
+                            <TableRow key={row.id}>
+                              <TableCell>{row.getValue("name")}</TableCell>
+                              <TableCell className="text-right">{row.getValue("bio")}</TableCell>
                             </TableRow>
-                        ))}
+                          ))
+                        ) : (
+                          <TableRow>
+                            <TableCell colSpan={2} className="h-24 text-center">
+                              No results.
+                            </TableCell>
+                          </TableRow>
+                        )}
                       </TableBody>
                     </Table>
+                    <div className="flex items-center justify-end py-2">
+                      <Button onClick={() => badDataTable.previousPage()}
+                              disabled={!badDataTable.getCanPreviousPage()}>
+                        Previous
+                      </Button>
+                      <span className="mx-2">
+                    Page {badDataTable.getState().pagination.pageIndex + 1} of {badDataTable.getPageCount()}
+                  </span>
+                      <Button onClick={() => badDataTable.nextPage()} disabled={!badDataTable.getCanNextPage()}>
+                        Next
+                      </Button>
+                      <select
+                          className="ml-4"
+                          value={badDataTable.getState().pagination.pageSize}
+                          onChange={e => {
+                            badDataTable.setPageSize(Number(e.target.value));
+                          }}
+                      >
+                        {[10, 20, 30, 40, 50].map(size => (
+                            <option key={size} value={size}>
+                              Show {size}
+                            </option>
+                        ))}
+                      </select>
+                    </div>
                   </TabsContent>
                 </div>
                 </Tabs>
