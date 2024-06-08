@@ -32,6 +32,22 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import {TextareaForm} from './comment.tsx';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 
 export const columns: ColumnDef<Info>[] = [
@@ -68,7 +84,7 @@ export const columns: ColumnDef<Info>[] = [
       },
       cell: ({ row }) => (
         <Sheet>
-        <SheetTrigger>{row.getValue("name")}</SheetTrigger>
+        <SheetTrigger><Button variant="link">{row.getValue("name")}</Button></SheetTrigger>
         <SheetContent>
           <SheetHeader>
             <SheetTitle>Henry Samueli<Badge variant="outline">Confirmed</Badge></SheetTitle>
@@ -118,9 +134,12 @@ export const columns: ColumnDef<Info>[] = [
       },
       cell: ({ row }) => 
         <div className="lowercase">
-          <Button variant="ghost" 
-          onClick={() => navigator.clipboard.writeText(row.getValue("CIK"))}>{row.getValue("CIK")}</Button>
-          </div>
+          <Popover>
+            <PopoverTrigger><Button variant="link" 
+          onClick={() => navigator.clipboard.writeText(row.getValue("CIK"))}>{row.getValue("CIK")}</Button></PopoverTrigger>
+            <PopoverContent>CIK copied</PopoverContent>
+          </Popover>
+            </div>
     },
     {
       accessorKey: "Company",
@@ -136,7 +155,14 @@ export const columns: ColumnDef<Info>[] = [
         )
       },
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("Company")}</div>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger><Button variant="link">{row.getValue("Company")}</Button></TooltipTrigger>
+            <TooltipContent>
+              <p>{row.getValue("CompanyCIK")}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       ),
     },
     {
