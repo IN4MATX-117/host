@@ -6,8 +6,8 @@ from sqlalchemy import text
 
 # Connecting with the MySQL
 username = 'root'
-password = '12345678'
-host = '127.0.0.1'
+password = 'Wjj030529!'
+host = 'localhost'
 database = 'UCI_Alumni'
 connection_string = f'mysql+pymysql://{username}:{password}@{host}/{database}'
 
@@ -15,10 +15,10 @@ connection_string = f'mysql+pymysql://{username}:{password}@{host}/{database}'
 engine = create_engine(connection_string)
 
 # Read the files
-full_names_uml = '/XXX/full_names_data.csv'
-related_forms_uml = "/XXX/related_forms_data.csv"
-cik_data_path = '/XXX/cik-lookup-data.txt'
-partial_names_path = "/XXX/partial_names_data.csv"
+full_names_uml = './full_names_data.csv'
+related_forms_uml = "./related_forms_data.csv"
+cik_data_path = './cik-lookup-data.txt'
+partial_names_path = "./partial_names_data.csv"
 
 full_names_data = pd.read_csv(full_names_uml)
 related_forms_data = pd.read_csv(related_forms_uml)
