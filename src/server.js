@@ -73,12 +73,14 @@ app.get('/api/partial-names', (req, res) => {
     SELECT 
         P.ID AS id, 
         P.Personal_CIK AS CIK, 
-        P.Name AS name, 
+        P.Parsing_name AS name, 
         P.Bio AS bio, 
         P.UML AS URL
     FROM persons P
     LEFT JOIN fillinglinks F ON P.Personal_CIK = F.Personal_CIK
-    WHERE P.WithName = 'No';
+    WHERE P.WithName = 'No'
+        AND (P.Parsing_name IS NOT NULL AND P.Parsing_name <> '' 
+           OR P.Bio IS NOT NULL AND P.Bio <> '' AND P.Bio <> 'N/A')
   `;
 
   connection.query(query, (error, results) => {
