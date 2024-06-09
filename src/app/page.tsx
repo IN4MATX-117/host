@@ -65,10 +65,14 @@ export default function Home() {
       const response = await fetch('http://localhost:5000/api/data');
       const result = await response.json();
 
-      // Format dates
-      const formattedData = result.map((item: { date: any }) => ({
+      // Format dates and parse formList
+      const formattedData = result.map((item: Info) => ({
         ...item,
         date: formatDate(item.date),
+        formList: Array.isArray(item.formList) ? item.formList.map((form) => ({
+          ...form,
+          filingDate: formatDate(form.filingDate),
+        })) : [],
       }));
 
       setData(formattedData);

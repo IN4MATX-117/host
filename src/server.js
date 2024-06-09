@@ -36,7 +36,17 @@ app.get('/api/data', (req, res) => {
         C.Company_name AS Company, 
         GROUP_CONCAT(DISTINCT F.SECFormType) AS forms,
         MAX(F.FilingDate) AS date,
-        P.Status AS status
+        P.Status AS status,
+        COALESCE(
+          JSON_ARRAYAGG(
+              JSON_OBJECT(
+                  'id', F.LinkID,
+                  'type', F.SECFormType,
+                  'URL', F.Link,
+                  'filingDate', F.FilingDate
+              )
+          ), JSON_ARRAY()
+        ) AS formList
     FROM persons P
     LEFT JOIN fillinglinks F ON P.Personal_CIK = F.Personal_CIK
     LEFT JOIN company C ON P.Company_CIK = C.Company_CIK
@@ -45,13 +55,15 @@ app.get('/api/data', (req, res) => {
   `;
 
   connection.query(query, (error, results) => {
-    console.log('Executing MySQL query:', query);
     if (error) {
       console.error('Error executing MySQL query:', error);
       res.status(500).json({ error: 'Error fetching data from MySQL' });
       return;
     }
-    res.json(results);
+    res.json(results.map(result => ({
+      ...result,
+      formList: JSON.parse(result.formList)
+    })));
   });
 });
 
