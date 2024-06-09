@@ -24,7 +24,7 @@ const FormSchema = z.object({
     }),
 })
 
-export function TextareaForm() {
+export function CommentBox() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
@@ -39,8 +39,6 @@ export function TextareaForm() {
       ),
     })
     } 
-// 在这里要改成让他留在页面上，或许重新想想怎么设计界面吧
-
 
   const [displayComment, setDisplayComment] = useState(false);
 

@@ -31,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {TextareaForm} from './comment.tsx';
+import {CommentBox} from './comment.tsx';
 import {
   HoverCard,
   HoverCardContent,
@@ -106,7 +106,7 @@ export const columns: ColumnDef<Info>[] = [
                   ))}
                 </TableBody>
               </Table>
-              <TextareaForm />
+              <CommentBox />
             </SheetDescription>
           </SheetHeader>
         </SheetContent>
