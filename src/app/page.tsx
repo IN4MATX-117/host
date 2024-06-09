@@ -69,6 +69,7 @@ export default function Home() {
       const formattedData = result.map((item: Info) => ({
         ...item,
         date: formatDate(item.date),
+        status: item.status || "Unconfirmed",
         formList: Array.isArray(item.formList) ? item.formList.map((form) => ({
           ...form,
           filingDate: formatDate(form.filingDate),

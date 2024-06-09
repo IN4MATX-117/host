@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
@@ -51,23 +51,43 @@ import {
 
 export const columns: ColumnDef<Info>[] = [
     {
-      accessorKey: "Status",
-      enableSorting: false,
-      enableHiding: false,
-      cell: ({ row }) => (
-        <Select>
-            <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="Misidentified">Misidentified</SelectItem>
-                <SelectItem value="Unconfirmed">Unconfirmed</SelectItem>
-            </SelectContent>
-        </Select>
+  accessorKey: "status",  // Make sure to use the correct key
+  enableSorting: false,
+  enableHiding: false,
+  cell: ({ row }) => {
+    const [status, setStatus] = useState<string>(row.getValue<string>("status"));
 
-      ),
-    },
+    const handleChange = async (newStatus: string) => {
+      setStatus(newStatus);
+
+      // Send update request to the server
+      const response = await fetch(`http://localhost:5000/api/update-status/${row.original.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to update status');
+      }
+    };
+
+    return (
+      <Select value={status} onValueChange={handleChange}>
+        <SelectTrigger className="w-[180px]">
+          <SelectValue>{status}</SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Confirmed">Confirmed</SelectItem>
+          <SelectItem value="Misidentified">Misidentified</SelectItem>
+          <SelectItem value="Unconfirmed">Unconfirmed</SelectItem>
+        </SelectContent>
+      </Select>
+    );
+  },
+},
     {
       accessorKey: "name",
       header: ({ column }) => {

@@ -140,29 +140,22 @@ app.put('/api/comments/:commentId', (req, res) => {
 
 
 // Route to update status
+// Route to update status
 app.put('/api/update-status/:id', (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
   const query = 'UPDATE persons SET Status = ? WHERE ID = ?';
   connection.query(query, [status, id], (error, results) => {
-    console.log('Executing MySQL query:', query, [status, id]);
     if (error) {
       console.error('Error updating status:', error);
       res.status(500).json({ error: 'Error updating status' });
       return;
     }
-    // Fetch the updated row to return the updated status
-    connection.query('SELECT Status FROM persons WHERE ID = ?', [id], (error, results) => {
-      if (error) {
-        console.error('Error fetching updated status:', error);
-        res.status(500).json({ error: 'Error fetching updated status' });
-        return;
-      }
-      res.json({ success: true, status: results[0].Status });
-    });
+    res.json({ success: true });
   });
 });
+
 
 // Start the server
 const PORT = process.env.PORT || 5000;

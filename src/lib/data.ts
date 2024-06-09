@@ -8,6 +8,7 @@
     date: string;
     CompanyCIK: string;
     Bio: string;
+    status: string;
     formList: Form[];
   };
 
