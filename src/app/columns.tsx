@@ -1,6 +1,5 @@
 import React from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import {
@@ -106,7 +105,7 @@ export const columns: ColumnDef<Info>[] = [
                   ))}
                 </TableBody>
               </Table>
-              <CommentBox />
+              <CommentBox personId={row.original.id} />
             </SheetDescription>
           </SheetHeader>
         </SheetContent>

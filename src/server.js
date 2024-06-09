@@ -94,6 +94,50 @@ app.get('/api/partial-names', (req, res) => {
   });
 });
 
+// Fetch comments for a specific person
+app.get('/api/comments/:personId', (req, res) => {
+  const { personId } = req.params;
+  const query = 'SELECT * FROM Comments WHERE PersonID = ?';
+  connection.query(query, [personId], (error, results) => {
+    if (error) {
+      console.error('Error fetching comments:', error);
+      res.status(500).json({ error: 'Error fetching comments' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+// Add a new comment
+app.post('/api/comments', (req, res) => {
+  const { personId, comment } = req.body;
+  const query = 'INSERT INTO Comments (PersonID, Comment) VALUES (?, ?)';
+  connection.query(query, [personId, comment], (error, results) => {
+    if (error) {
+      console.error('Error adding comment:', error);
+      res.status(500).json({ error: 'Error adding comment' });
+      return;
+    }
+    res.json({ success: true, commentId: results.insertId });
+  });
+});
+
+// Update a comment
+app.put('/api/comments/:commentId', (req, res) => {
+  const { commentId } = req.params;
+  const { comment } = req.body;
+  const query = 'UPDATE Comments SET Comment = ? WHERE CommentID = ?';
+  connection.query(query, [comment, commentId], (error, results) => {
+    if (error) {
+      console.error('Error updating comment:', error);
+      res.status(500).json({ error: 'Error updating comment' });
+      return;
+    }
+    res.json({ success: true });
+  });
+});
+
+
 
 // Route to update status
 app.put('/api/update-status/:id', (req, res) => {
