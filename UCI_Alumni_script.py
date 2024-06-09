@@ -2,13 +2,12 @@ import pandas as pd
 import pymysql
 import re
 from sqlalchemy import create_engine
-from sqlalchemy import text
 
 # Connecting with the MySQL
-username = 'root'
-password = 'Wjj030529!'
+username = 'mytestuser'
+password = 'My6$Password'
 host = 'localhost'
-database = 'UCI_Alumni'
+database = 'uci_alumni'
 connection_string = f'mysql+pymysql://{username}:{password}@{host}/{database}'
 
 # Create an engine
@@ -22,8 +21,6 @@ partial_names_path = "./partial_names_data.csv"
 
 full_names_data = pd.read_csv(full_names_uml)
 related_forms_data = pd.read_csv(related_forms_uml)
-partial_names_data = pd.read_csv(partial_names_path, header=None)
-partial_names_data.columns = ['Parsing_name', 'Link', 'Company_CIK', 'Bio']
 # CIK-searching
 def process_cik_file(file_path):
     data = []
@@ -32,6 +29,7 @@ def process_cik_file(file_path):
             if ':' in line:
                 name, cik = line.split(':', 1)
                 cik_cleaned = cik.strip().replace(':', '').lstrip('0')
+                cik_cleaned = cik_cleaned.zfill(7)
                 data.append({'Name': name.strip(), 'CIK': cik_cleaned})
     return data
 
@@ -47,10 +45,11 @@ else:
     print("CIK_Search: No data to insert.")
 
 
+# table for persons
+
 # Preprocess the full_names_data
 full_names_data['Personal_CIK'] = full_names_data['Personal_CIK'].apply(lambda x: pd.to_numeric(x, errors='coerce') if x is not None else "N/A")
 full_names_data['Name'] = full_names_data['Name'].fillna('N/A')
-#full_names_data['Parsing_name'] =full_names_data['Parsing_name'].fillna('N/A')
 full_names_data['Parsing_name'] = full_names_data['Name'].apply(lambda x: "Null" if x != 'N/A' else None)
 full_names_data['Company_CIK'] = full_names_data['Company_CIK'].fillna('N/A')
 full_names_data['Bio'] = full_names_data['Bio'].fillna('N/A')
@@ -121,7 +120,28 @@ else:
     print("Filling Link: No new data to insert.")
 
 # Company
+'''
+related_forms_data['extracted_cik'] = related_forms_data['companyNameLong'].apply(
+    lambda x: re.findall(r'\(CIK (\d+)\)', x)[0] if re.search(r'\(CIK \d+\)', x) else None
+)
+related_forms_data['normalized_cik'] = related_forms_data['extracted_cik'].apply(lambda x: str(int(x)))
+full_names_data['normalized_Company_CIK'] = full_names_data['Company_CIK'].apply(lambda x: str(int(x)))
+# Extract company name from companyNameLong before the first "("
+related_forms_data['Company_name'] = related_forms_data['companyNameLong'].apply(lambda x: x.split('(')[0].strip())
+merged_data = pd.merge(full_names_data, related_forms_data, left_on='normalized_Company_CIK', right_on='normalized_cik', how='inner')
 
+final_data = merged_data[['normalized_Company_CIK', 'Company_name', 'ticker']].rename(columns={
+    'normalized_Company_CIK': 'Company_CIK',
+    'ticker': 'StockTicker'
+})
+final_data.drop_duplicates(inplace=True)
+final_data.to_sql('Company', con=engine, index=False, if_exists='replace')
+print("Data successfully inserted into the Company table.")
+
+'''
+# Company
+
+# Fetch CIK_Search data from the database
 cik_search_data = pd.read_sql("SELECT Name AS Company_name, CIK AS Company_CIK FROM CIK_Search", con=engine)
 
 # Convert Company_CIK in both DataFrames to string to ensure data type alignment
@@ -141,32 +161,7 @@ if not merged_data.empty:
     company_data = merged_data[['Company_CIK', 'Company_name']]
     company_data = company_data.drop_duplicates()
     company_data['StockTicker'] = None
-    company_data[['Company_CIK', 'Company_name', 'StockTicker']].to_sql('Company', con=engine, index=False, if_exists='replace')
+    company_data[['Company_CIK', 'Company_name', 'StockTicker']].to_sql('company', con=engine, index=False, if_exists='replace')
     print("Company: Data merged and inserted successfully.")
 else:
     print("Company: No data to merge or insert.")
-
-
-# parsing_name
-existing_persons_data = pd.read_sql("SELECT * FROM Persons", con=engine)
-
-# Merge partial_names_data with existing_persons_data on the 'Link' and 'UML' fields
-with engine.connect() as connection:
-    merged_data = pd.merge(existing_persons_data, partial_names_data[['Parsing_name', 'Link']],
-                           left_on='UML', right_on='Link', how='left')
-    # Debugging output to check if columns are as expected
-    print(merged_data.columns)
-    # Check if the necessary columns are present
-    if 'Parsing_name_y' in merged_data.columns:
-        for index, row in merged_data.iterrows():
-            if pd.notna(row['Parsing_name_y']) and (row['Parsing_name_x'] is None or row['Parsing_name_x'] != row['Parsing_name_y']):
-                sql_query = text("""
-                UPDATE Persons
-                SET Parsing_name = :new_parsing_name
-                WHERE UML = :uml
-                """)
-                connection.execute(sql_query, {'new_parsing_name': row['Parsing_name_y'], 'uml': row['UML']})
-        connection.commit()
-        print("Parsing_name updated where applicable.")
-    else:
-        print("Error: 'Parsing_name_y' column not found in the merged data.")
