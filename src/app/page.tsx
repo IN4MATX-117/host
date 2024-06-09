@@ -24,8 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Info } from '../lib/data.ts';
-import { badData, BadInfo } from '../lib/badData.ts';
+import { Info, BadInfo } from '../lib/data.ts';
 import {
   ColumnFiltersState,
   SortingState,
