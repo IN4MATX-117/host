@@ -179,3 +179,14 @@ with engine.connect() as connection:
     """)
     connection.execute(update_query, {'name_pattern': '%None_Name%'})
     connection.commit()
+
+#fixing, when name == None_name, WithName is No
+with engine.connect() as connection:
+    # Define the SQL UPDATE statement
+    update_query = text("""
+        UPDATE Company
+        SET SharePrice = Null
+        WHERE SharePrice LIKE :share_pattern
+    """)
+    connection.execute(update_query, {'share_pattern': '%non_stock_price%'})
+    connection.commit()
