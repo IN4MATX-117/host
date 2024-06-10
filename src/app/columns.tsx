@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { Separator } from "@/components/ui/separator"
 import {
   Sheet,
   SheetContent,
@@ -61,7 +62,7 @@ export const columns: ColumnDef<Info>[] = [
       setStatus(newStatus);
 
       // Send update request to the server
-      const response = await fetch(`http://localhost:5000/api/update-status/${row.original.id}`, {
+      const response = await fetch(`http://localhost:5001/api/update-status/${row.original.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -103,10 +104,18 @@ export const columns: ColumnDef<Info>[] = [
       },
       cell: ({ row }) => (
         <Sheet>
-        <SheetTrigger><Button variant="link">{row.getValue("name")}</Button></SheetTrigger>
-        <SheetContent>
-          <SheetHeader>
-            <SheetTitle>{row.getValue("name")}<Badge variant="outline">{row.getValue("status")}</Badge></SheetTitle>
+        <SheetTrigger><Button variant="link" className="mb-2 mt-2 rounded-full">
+          {row.getValue("name")}
+        </Button>
+          </SheetTrigger>
+          <SheetContent>
+        <SheetHeader>
+          <SheetTitle className="text-2xl text-center">
+            <div>{row.getValue("name")}</div>
+            <div className="mt-2 mb-2">
+          <Badge variant="outline">{row.getValue("status")}</Badge>
+            </div>
+          </SheetTitle>
             <SheetDescription>
               <p>{row.original.Bio}</p>
               <Table>
@@ -125,6 +134,11 @@ export const columns: ColumnDef<Info>[] = [
                   ))}
                 </TableBody>
               </Table>
+              <Separator className="my-4" />
+              <p>Note: there might be multiple company names associated with one company CIK, please identify which through reviewing forms.</p>
+              <p>Company CIK: {row.original.CompanyCIK}</p>
+              <p>Company Name: </p>
+              <Separator className="my-4" />
               <CommentBox personId={row.original.id} />
             </SheetDescription>
           </SheetHeader>
@@ -154,30 +168,30 @@ export const columns: ColumnDef<Info>[] = [
           </Popover>
             </div>
     },
-    {
-      accessorKey: "Company",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Company
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        )
-      },
-      cell: ({ row }) => (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger><Button variant="link" onClick={() => navigator.clipboard.writeText(row.original.CompanyCIK)}>{row.getValue("Company")}</Button></TooltipTrigger>
-            <TooltipContent>
-              <p>{row.original.CompanyCIK}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      ),
-    },
+    // {
+    //   accessorKey: "Company",
+    //   header: ({ column }) => {
+    //     return (
+    //       <Button
+    //         variant="ghost"
+    //         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+    //       >
+    //         Company
+    //         <ArrowUpDown className="ml-2 h-4 w-4" />
+    //       </Button>
+    //     )
+    //   },
+    //   cell: ({ row }) => (
+    //     <TooltipProvider>
+    //       <Tooltip>
+    //         <TooltipTrigger><Button variant="link" onClick={() => navigator.clipboard.writeText(row.original.CompanyCIK)}>{row.getValue("Company")}</Button></TooltipTrigger>
+    //         <TooltipContent>
+    //           <p>{row.original.CompanyCIK}</p>
+    //         </TooltipContent>
+    //       </Tooltip>
+    //     </TooltipProvider>
+    //   ),
+    // },
     {
       accessorKey: "forms",
       header: "Forms",
