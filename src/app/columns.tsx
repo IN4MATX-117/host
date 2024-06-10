@@ -138,7 +138,7 @@ export const columns = (updateStatus: (id: string, newStatus: string) => void): 
               <Separator className="my-4" />
               <p>Note: there might be multiple company names associated with one company CIK, please identify which through reviewing forms.</p>
               <p>Company CIK: {row.original.CompanyCIK}</p>
-              <p>Company Name: </p>
+              <p>Company Name: {row.original.Company} </p>
               <Separator className="my-4" />
               <CommentBox personId={row.original.id} />
             </SheetDescription>
