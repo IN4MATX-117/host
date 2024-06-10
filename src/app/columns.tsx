@@ -108,7 +108,7 @@ export const columns: ColumnDef<Info>[] = [
           <SheetHeader>
             <SheetTitle>{row.getValue("name")}<Badge variant="outline">{row.getValue("status")}</Badge></SheetTitle>
             <SheetDescription>
-              {row.getValue("bio")}
+              <p>{row.original.Bio}</p>
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -170,9 +170,9 @@ export const columns: ColumnDef<Info>[] = [
       cell: ({ row }) => (
         <TooltipProvider>
           <Tooltip>
-            <TooltipTrigger><Button variant="link">{row.getValue("Company")}</Button></TooltipTrigger>
+            <TooltipTrigger><Button variant="link" onClick={() => navigator.clipboard.writeText(row.original.CompanyCIK)}>{row.getValue("Company")}</Button></TooltipTrigger>
             <TooltipContent>
-              <p>{row.getValue("CompanyCIK")}</p>
+              <p>{row.original.CompanyCIK}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

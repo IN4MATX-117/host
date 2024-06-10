@@ -33,7 +33,9 @@ app.get('/api/data', (req, res) => {
         P.Personal_CIK AS CIK, 
         P.Name AS name, 
         P.NumberOfShares AS amount,
-        C.Company_name AS Company, 
+        C.Company_name AS Company,
+        P.Bio AS Bio,
+        P.Company_CIK AS CompanyCIK,
         GROUP_CONCAT(DISTINCT F.SECFormType) AS forms,
         MAX(F.FilingDate) AS date,
         P.Status AS status,
@@ -51,7 +53,7 @@ app.get('/api/data', (req, res) => {
     LEFT JOIN fillinglinks F ON P.Personal_CIK = F.Personal_CIK
     LEFT JOIN company C ON P.Company_CIK = C.Company_CIK
     WHERE P.WithName = 'Yes'
-    GROUP BY P.ID, P.Personal_CIK, P.Name, C.Company_name, P.Status;
+    GROUP BY P.ID, P.Personal_CIK, P.Name, C.Company_name, P.Bio, P.Company_CIK, P.Status;
   `;
 
   connection.query(query, (error, results) => {
