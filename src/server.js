@@ -28,33 +28,35 @@ connection.connect((err) => {
 // Example route to fetch data from MySQL
 app.get('/api/data', (req, res) => {
   const query = `
-    SELECT 
-        P.ID AS id, 
-        P.Personal_CIK AS CIK, 
-        P.Name AS name, 
-        P.NumberOfShares AS amount,
-        C.Company_name AS Company,
-        P.Bio AS Bio,
-        P.Company_CIK AS CompanyCIK,
-        GROUP_CONCAT(DISTINCT F.SECFormType) AS forms,
-        MAX(F.FilingDate) AS date,
-        P.Status AS status,
-        COALESCE(
-          JSON_ARRAYAGG(
-              JSON_OBJECT(
-                  'id', F.LinkID,
-                  'type', F.SECFormType,
-                  'URL', F.Link,
-                  'filingDate', F.FilingDate
-              )
-          ), JSON_ARRAY()
-        ) AS formList
-    FROM persons P
-    LEFT JOIN fillinglinks F ON P.Personal_CIK = F.Personal_CIK
-    LEFT JOIN company C ON P.Company_CIK = C.Company_CIK
-    WHERE P.WithName = 'Yes'
-    GROUP BY P.ID, P.Personal_CIK, P.Name, C.Company_name, P.Bio, P.Company_CIK, P.Status;
-  `;
+  SELECT 
+  P.ID AS id, 
+  P.Personal_CIK AS CIK, 
+  P.Name AS name, 
+  P.NumberOfShares AS amount,
+  C.Company_name AS Company,
+  C.SharePrice AS sharePrice,
+  P.Bio AS Bio,
+  P.Company_CIK AS CompanyCIK,
+  GROUP_CONCAT(DISTINCT F.SECFormType) AS forms,
+  MAX(F.FilingDate) AS date,
+  P.Status AS status,
+  COALESCE(
+    JSON_ARRAYAGG(
+        JSON_OBJECT(
+            'id', F.LinkID,
+            'type', F.SECFormType,
+            'URL', F.Link,
+            'filingDate', F.FilingDate
+        )
+    ), JSON_ARRAY()
+  ) AS formList,
+  (P.NumberOfShares * C.SharePrice) AS total
+FROM persons P
+LEFT JOIN fillinglinks F ON P.Personal_CIK = F.Personal_CIK
+LEFT JOIN company C ON P.Company_CIK = C.Company_CIK
+WHERE P.WithName = 'Yes'
+GROUP BY P.ID, P.Personal_CIK, P.Name, C.Company_name, C.SharePrice, P.Bio, P.Company_CIK, P.Status;
+`;
 
   connection.query(query, (error, results) => {
     if (error) {
@@ -160,7 +162,7 @@ app.put('/api/update-status/:id', (req, res) => {
 
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });
