@@ -180,7 +180,6 @@ with engine.connect() as connection:
     connection.execute(update_query, {'name_pattern': '%None_Name%'})
     connection.commit()
 
-#fixing, when name == None_name, WithName is No
 with engine.connect() as connection:
     # Define the SQL UPDATE statement
     update_query = text("""

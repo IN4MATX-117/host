@@ -34,7 +34,7 @@ export function CommentBox({ personId }) {
     // Fetch the existing comment for the person
     async function fetchComment() {
       try {
-        const response = await fetch(`http://localhost:5000/api/comments/${personId}`);
+        const response = await fetch(`http://localhost:5001/api/comments/${personId}`);
         const result = await response.json();
         if (result.length > 0) {
           form.setValue("comment", result[0].Comment);
@@ -51,7 +51,7 @@ export function CommentBox({ personId }) {
     try {
       if (commentId) {
         // Update existing comment
-        await fetch(`http://localhost:5000/api/comments/${commentId}`, {
+        await fetch(`http://localhost:5001/api/comments/${commentId}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export function CommentBox({ personId }) {
         });
       } else {
         // Add new comment
-        const response = await fetch('http://localhost:5000/api/comments', {
+        const response = await fetch('http://localhost:5001/api/comments', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

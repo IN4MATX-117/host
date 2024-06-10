@@ -9,8 +9,8 @@ app.use(express.json());
 // MySQL Connection Configuration
 const connection = mysql.createConnection({
   host: 'localhost', // Change this to your MySQL host
-  user: 'mytestuser', // Change this to your MySQL username
-  password: 'My6$Password', // Change this to your MySQL password
+  user: 'root', // Change this to your MySQL username
+  password: 'Wjj030529!', // Change this to your MySQL password
   database: 'uci_alumni', // Change this to your MySQL database name
 });
 
@@ -55,7 +55,7 @@ SELECT
   P.Personal_CIK AS CIK,
   DN.Name AS name,
   P.NumberOfShares AS amount,
-  GROUP_CONCAT(DISTINCT C.Company_name) AS Company,
+  GROUP_CONCAT(C.Company_name) AS Company,
   C.SharePrice AS sharePrice,
   P.Bio AS Bio,
   P.Company_CIK AS CompanyCIK,

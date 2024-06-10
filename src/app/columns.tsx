@@ -3,6 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Sheet,
   SheetContent,
@@ -105,11 +106,12 @@ export const columns = (updateStatus: (id: string, newStatus: string) => void): 
       },
       cell: ({ row }) => (
         <Sheet>
-        <SheetTrigger><Button variant="link" className="mb-2 mt-2 rounded-full">
+          <SheetTrigger>
+        <Button variant="link" className="mb-2 mt-2 rounded-full">
           {row.getValue("name")}
         </Button>
           </SheetTrigger>
-          <SheetContent>
+          <SheetContent className="max-h-full overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-2xl text-center">
             <div>{row.getValue("name")}</div>
@@ -146,8 +148,8 @@ export const columns = (updateStatus: (id: string, newStatus: string) => void): 
         </SheetContent>
       </Sheet>
       ),
-    },
-    {
+        },
+        {
       accessorKey: "CIK",
       header: ({ column }) => {
         return (
