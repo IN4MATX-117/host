@@ -55,7 +55,7 @@ SELECT
   P.Personal_CIK AS CIK,
   DN.Name AS name,
   P.NumberOfShares AS amount,
-  GROUP_CONCAT(C.Company_name) AS Company,
+  GROUP_CONCAT(distinct C.Company_name) AS Company,
   C.SharePrice AS sharePrice,
   P.Bio AS Bio,
   P.Company_CIK AS CompanyCIK,
@@ -94,7 +94,8 @@ app.get('/api/partial-names', (req, res) => {
         P.Personal_CIK AS CIK, 
         P.Parsing_name AS name, 
         P.Bio AS bio, 
-        P.UML AS URL
+        P.UML AS URL,
+        P.Company_CIK AS CompanyCIK
     FROM persons P
     LEFT JOIN fillinglinks F ON P.Personal_CIK = F.Personal_CIK
     WHERE P.WithName = 'No'
@@ -159,7 +160,6 @@ app.put('/api/comments/:commentId', (req, res) => {
 
 
 // Route to update status
-// Route to update status
 app.put('/api/update-status/:id', (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -177,7 +177,7 @@ app.put('/api/update-status/:id', (req, res) => {
 
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
 });

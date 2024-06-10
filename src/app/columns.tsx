@@ -54,8 +54,8 @@ import {
 export const columns = (updateStatus: (id: string, newStatus: string) => void): ColumnDef<Info>[] => [
     {
   accessorKey: "status",  // Make sure to use the correct key
-  enableSorting: false,
-  enableHiding: false,
+  enableSorting: true,
+  enableHiding: true,
   cell: ({ row }) => {
     const [status, setStatus] = useState<string>(row.getValue<string>("status"));
 
@@ -85,7 +85,7 @@ export const columns = (updateStatus: (id: string, newStatus: string) => void): 
         <SelectContent>
           <SelectItem value="Confirmed">Confirmed</SelectItem>
           <SelectItem value="Misidentified">Misidentified</SelectItem>
-          <SelectItem value="Unconfirmed">Unconfirmed</SelectItem>
+          <SelectItem value="Unverified">Unverified</SelectItem>
         </SelectContent>
       </Select>
     );

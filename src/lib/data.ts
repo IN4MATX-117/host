@@ -26,5 +26,6 @@
     name: string;
     bio: string;
     URL: string;
+    CompanyCIK: string;
     form: string;
   };

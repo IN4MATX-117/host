@@ -11,6 +11,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
@@ -75,7 +79,7 @@ export default function Home() {
       const formattedData = result.map((item: Info) => ({
         ...item,
         date: formatDate(item.date),
-        status: item.status || "Unconfirmed",
+        status: item.status || "Unverified",
         formList: Array.isArray(item.formList) ? item.formList.map((form) => ({
           ...form,
           filingDate: formatDate(form.filingDate),
@@ -243,30 +247,12 @@ export default function Home() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                    onClick={() => {
-                      const filterValue = table.getColumn("Status")?.getFilterValue() === "Confirmed" ? "" : "Confirmed";
-                      table.getColumn("Status")?.setFilterValue(filterValue);
-                    }}
-                    >
-                    Confirmed
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                    onClick={() => {
-                      const filterValue = table.getColumn("Status")?.getFilterValue() === "Unconfirmed" ? "" : "Unconfirmed";
-                      table.getColumn("Status")?.setFilterValue(filterValue);
-                    }}
-                    >
-                    Unconfirmed
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                    onClick={() => {
-                      const filterValue = table.getColumn("Status")?.getFilterValue() === "Misidentified" ? "" : "Misidentified";
-                      table.getColumn("Status")?.setFilterValue(filterValue);
-                    }}
-                    >
-                    Misidentified
-                    </DropdownMenuItem>
+                    <DropdownMenuRadioGroup value={table.getColumn("status")?.getFilterValue() as string} onValueChange={(value) => table.getColumn("status")?.setFilterValue(value)}>
+                      <DropdownMenuRadioItem value="">All</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="Misidentified">Misidentified</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="Confirmed">Confirmed</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="Unverified">Unverified</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
                   </DropdownMenuContent>
                   </DropdownMenu>
                 </CardContent>
@@ -359,6 +345,7 @@ export default function Home() {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Partial Name</TableHead>
+                          <TableHead>Company CIK</TableHead>
                           <TableHead className="text-right">Bio</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -366,7 +353,8 @@ export default function Home() {
                         {badDataTable.getRowModel().rows?.length ? (
                           badDataTable.getRowModel().rows.map((row) => (
                             <TableRow key={row.id}>
-                              <TableCell>{row.getValue("name")}</TableCell>
+                              <TableCell><a href={row.original.URL}>{row.getValue("name")}</a></TableCell>
+                              <TableCell>{row.original.CompanyCIK}</TableCell>
                               <TableCell className="text-right">{row.getValue("bio")}</TableCell>
                             </TableRow>
                           ))
