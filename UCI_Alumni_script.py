@@ -168,3 +168,14 @@ with engine.connect() as connection:
         connection.execute(update_query, {'stock_ticker': row['StockTicker'], 'share_price': row['SharePrice'], 'company_cik': row['Company_CIK']})
     connection.commit()
     print("Company table updated successfully with new StockTicker and SharePrice values.")
+
+#fixing, when name == None_name, WithName is No
+with engine.connect() as connection:
+    # Define the SQL UPDATE statement
+    update_query = text("""
+        UPDATE Persons
+        SET WithName = 'No'
+        WHERE Name LIKE :name_pattern
+    """)
+    connection.execute(update_query, {'name_pattern': '%None_Name%'})
+    connection.commit()
