@@ -48,9 +48,8 @@ else:
 
 
 # Preprocess the full_names_data
-full_names_data['Personal_CIK'] = full_names_data['Personal_CIK'].apply(lambda x: pd.to_numeric(x, errors='coerce') if x is not None else "N/A")
+full_names_data['Personal_CIK'] = full_names_data['Personal_CIK'].astype(str)
 full_names_data['Name'] = full_names_data['Name'].fillna('N/A')
-#full_names_data['Parsing_name'] =full_names_data['Parsing_name'].fillna('N/A')
 full_names_data['Parsing_name'] = full_names_data['Name'].apply(lambda x: "Null" if x != 'N/A' else None)
 full_names_data['Company_CIK'] = full_names_data['Company_CIK'].fillna('N/A')
 full_names_data['Bio'] = full_names_data['Bio'].fillna('N/A')
@@ -61,14 +60,11 @@ full_names_data['NumberOfShares'] = full_names_data['shares']
 full_names_data['WithName'] = full_names_data['Name'].apply(lambda x: "Yes" if x != 'N/A' else "No")
 
 # Ensure Personal_CIK is treated as int for merging
-full_names_data['Personal_CIK'] = full_names_data['Personal_CIK'].astype('Int64')
-
+full_names_data['Personal_CIK'] = full_names_data['Personal_CIK'].astype(str)
 # Fetch existing Personal_CIK and UML pairs from the Persons table
 existing_persons_pairs = pd.read_sql("SELECT Personal_CIK, UML FROM Persons", con=engine)
-
 # Merge the new data with existing pairs to find duplicates
 merged_persons_data = pd.merge(full_names_data, existing_persons_pairs, on=["Personal_CIK", "UML"], how='left', indicator=True)
-
 # Filter out existing entries
 new_unique_persons_entries = merged_persons_data[merged_persons_data['_merge'] == 'left_only'].drop(columns=['_merge'])
 
@@ -83,27 +79,13 @@ if not new_unique_persons_entries.empty:
 else:
     print("Persons: No new unique data to insert.")
 
-# Insert into Fillings only if Persons table was updated
-if persons_updated:
-    full_names_data['Personal_CIK'] = pd.to_numeric(full_names_data['Personal_CIK'], errors='coerce')
-    full_names_data['StockType'] = None
-    full_names_data['SharePrice'] = None
-    full_names_data['TransactionType'] = None
-
-    if not full_names_data.empty:
-        full_names_data[['Personal_CIK', 'StockType', 'SharePrice', 'TransactionType']].to_sql('Fillings', con=engine, index=False, if_exists='append')
-        print("Data successfully inserted into Fillings.")
-    else:
-        print("No new data to insert into Fillings.")
 
 # Filling Link
-related_forms_data['personal_cik'] = pd.to_numeric(related_forms_data['personal_cik'], errors='coerce')
+related_forms_data['personal_cik'] = related_forms_data['personal_cik'].astype(str)
 related_forms_data['SECFormType'] = related_forms_data['formType']
 related_forms_data['FilingDate'] = related_forms_data['filedAt']
 related_forms_data['Link'] = related_forms_data['filingUrl']
 
-# Ensure personal_cik is treated as int for merging
-related_forms_data['personal_cik'] = related_forms_data['personal_cik'].astype('Int64')
 
 # Fetch existing personal_cik and Link pairs from the FillingLinks table
 existing_fillinglinks_pairs = pd.read_sql("SELECT personal_cik, Link FROM FillingLinks", con=engine)
@@ -141,8 +123,10 @@ if not merged_data.empty:
     # Rename columns and drop duplicates
     company_data = merged_data[['Company_CIK', 'Company_name']]
     company_data = company_data.drop_duplicates()
-    company_data['StockTicker'] = None
-    company_data[['Company_CIK', 'Company_name', 'StockTicker']].to_sql('Company', con=engine, index=False, if_exists='replace')
+    company_data['StockTicker'] = "None"
+    company_data['SharePrice'] = "None"
+    #company_data['SharePrice'] = full_names_data['SharePrice'].apply(lambda x: -1 if x == "non_stock_price" else x)
+    company_data[['Company_CIK', 'Company_name', 'StockTicker','SharePrice']].to_sql('Company', con=engine, index=False, if_exists='replace')
     print("Company: Data merged and inserted successfully.")
 else:
     print("Company: No data to merge or insert.")
@@ -150,7 +134,6 @@ else:
 
 # parsing_name
 existing_persons_data = pd.read_sql("SELECT * FROM Persons", con=engine)
-
 # Merge partial_names_data with existing_persons_data on the 'Link' and 'UML' fields
 with engine.connect() as connection:
     merged_data = pd.merge(existing_persons_data, partial_names_data[['Parsing_name', 'Link']],
@@ -167,8 +150,32 @@ with engine.connect() as connection:
                 WHERE UML = :uml
                 """)
                 connection.execute(sql_query, {'new_parsing_name': row['Parsing_name_y'], 'uml': row['UML']})
-                print(f"Updated {row['UML']}: {row['Parsing_name_x']} to {row['Parsing_name_y']}")
         connection.commit()
         print("Parsing_name updated where applicable.")
     else:
         print("Error: 'Parsing_name_y' column not found in the merged data.")
+
+merged_data = pd.merge(full_names_data, cik_search_data, on='Company_CIK', how='inner')
+
+# Update existing records in the Company table
+with engine.connect() as connection:
+    for index, row in merged_data.iterrows():
+        update_query = text("""
+            UPDATE Company
+            SET StockTicker = :stock_ticker, SharePrice = :share_price
+            WHERE Company_CIK = :company_cik
+        """)
+        connection.execute(update_query, {'stock_ticker': row['StockTicker'], 'share_price': row['SharePrice'], 'company_cik': row['Company_CIK']})
+    connection.commit()
+    print("Company table updated successfully with new StockTicker and SharePrice values.")
+
+#fixing, when name == None_name, WithName is No
+with engine.connect() as connection:
+    # Define the SQL UPDATE statement
+    update_query = text("""
+        UPDATE Persons
+        SET WithName = 'No'
+        WHERE Name LIKE :name_pattern
+    """)
+    connection.execute(update_query, {'name_pattern': '%None_Name%'})
+    connection.commit()
