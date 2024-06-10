@@ -229,6 +229,59 @@ export const columns = (updateStatus: (id: string, newStatus: string) => void): 
         return <div className="text-right font-medium">{amount}</div>
       },
     },
+    {
+      accessorKey: "sharePrice",
+      header: ({ column }) => {
+        return (
+          <div className = 'text-right'>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Shares Price
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        )
+      },
+      cell: ({ row }) => {
+        const price = parseFloat(row.getValue("sharePrice"))
+        // Format the amount as a dollar amount
+        const formatted = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(price)
+  
+        return <div className="text-right font-medium">{formatted}</div>
+      },
+    },
+    {
+      accessorKey: "total",
+      header: ({ column }) => {
+        return (
+          <div className = 'text-right'>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Total Price
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        )
+      },
+      cell: ({ row }) => {
+        const total = parseFloat(row.getValue("total"));
+        // Format the amount as a dollar amount with two decimal points
+        const formatted = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 2,
+        }).format(total)
+        
+        return <div className="text-right font-medium">{formatted}</div>
+      },
+    },
     // {
     //   id: "actions",
     //   enableHiding: false,

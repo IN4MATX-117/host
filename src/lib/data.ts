@@ -10,6 +10,8 @@
     Bio: string;
     status: string;
     formList: Form[];
+    sharePrice: number;
+    total: number;
   };
 
   export type Form = {
