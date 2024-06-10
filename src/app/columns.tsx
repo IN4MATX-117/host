@@ -3,6 +3,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
 import { Separator } from "@/components/ui/separator"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Sheet,
   SheetContent,
@@ -105,11 +106,12 @@ export const columns = (updateStatus: (id: string, newStatus: string) => void): 
       },
       cell: ({ row }) => (
         <Sheet>
-        <SheetTrigger><Button variant="link" className="mb-2 mt-2 rounded-full">
+          <SheetTrigger>
+        <Button variant="link" className="mb-2 mt-2 rounded-full">
           {row.getValue("name")}
         </Button>
           </SheetTrigger>
-          <SheetContent>
+          <SheetContent className="max-h-full overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-2xl text-center">
             <div>{row.getValue("name")}</div>
@@ -117,37 +119,43 @@ export const columns = (updateStatus: (id: string, newStatus: string) => void): 
           <Badge variant="outline">{row.getValue("status")}</Badge>
             </div>
           </SheetTitle>
-            <SheetDescription>
-              <p>{row.original.Bio}</p>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Form Type</TableHead>
-                    <TableHead>Filed Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                {row.original.formList.map((form) => (
-                    <TableRow key={form.id}>
-                      <TableCell><a href={form.URL}>{form.type}</a></TableCell>
-                      <TableCell>{form.filingDate}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <Separator className="my-4" />
-              <p>Note: there might be multiple company names associated with one company CIK, please identify which through reviewing forms.</p>
-              <p>Company CIK: {row.original.CompanyCIK}</p>
-              <p>Company Name: </p>
-              <Separator className="my-4" />
-              <CommentBox personId={row.original.id} />
-            </SheetDescription>
-          </SheetHeader>
-        </SheetContent>
-      </Sheet>
+          <SheetDescription>
+            <p>{row.original.Bio}</p>
+            <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Form Type</TableHead>
+              <TableHead>Filed Date</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {row.original.formList.map((form) => (
+              <TableRow key={form.id}>
+            <TableCell>
+              <a href={form.URL}>{form.type}</a>
+            </TableCell>
+            <TableCell>{form.filingDate}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+            </Table>
+            <Separator className="my-4" />
+            <p>
+          Note: there might be multiple company names associated with
+          one company CIK, please identify which through reviewing
+          forms.
+            </p>
+            <p>Company CIK: {row.original.CompanyCIK}</p>
+            <p>Company Name: </p>
+            <Separator className="my-4" />
+            <CommentBox personId={row.original.id} />
+          </SheetDescription>
+        </SheetHeader>
+          </SheetContent>
+        </Sheet>
       ),
-    },
-    {
+        },
+        {
       accessorKey: "CIK",
       header: ({ column }) => {
         return (

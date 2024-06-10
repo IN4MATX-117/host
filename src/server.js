@@ -9,8 +9,8 @@ app.use(express.json());
 // MySQL Connection Configuration
 const connection = mysql.createConnection({
   host: 'localhost', // Change this to your MySQL host
-  user: 'mytestuser', // Change this to your MySQL username
-  password: 'My6$Password', // Change this to your MySQL password
+  user: 'root', // Change this to your MySQL username
+  password: 'Wjj030529!', // Change this to your MySQL password
   database: 'uci_alumni', // Change this to your MySQL database name
 });
 
@@ -28,34 +28,49 @@ connection.connect((err) => {
 // Example route to fetch data from MySQL
 app.get('/api/data', (req, res) => {
   const query = `
-  SELECT 
-  P.ID AS id, 
-  P.Personal_CIK AS CIK, 
-  P.Name AS name, 
+  WITH DistinctNames AS (
+  SELECT DISTINCT P.Name, P.ID
+  FROM persons P
+  WHERE P.WithName = 'Yes'
+),
+FormList AS (
+  SELECT
+    F.Personal_CIK,
+    JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'id', F.LinkID,
+        'type', F.SECFormType,
+        'URL', F.Link,
+        'filingDate', F.FilingDate
+      )
+    ) AS formList
+  FROM (
+    SELECT DISTINCT LinkID, SECFormType, Link, FilingDate, Personal_CIK
+    FROM fillinglinks
+  ) F
+  GROUP BY F.Personal_CIK
+)
+SELECT
+  P.ID AS id,
+  P.Personal_CIK AS CIK,
+  DN.Name AS name,
   P.NumberOfShares AS amount,
-  C.Company_name AS Company,
+  GROUP_CONCAT(C.Company_name) AS Company,
   C.SharePrice AS sharePrice,
   P.Bio AS Bio,
   P.Company_CIK AS CompanyCIK,
   GROUP_CONCAT(DISTINCT F.SECFormType) AS forms,
   MAX(F.FilingDate) AS date,
   P.Status AS status,
-  COALESCE(
-    JSON_ARRAYAGG(
-        JSON_OBJECT(
-            'id', F.LinkID,
-            'type', F.SECFormType,
-            'URL', F.Link,
-            'filingDate', F.FilingDate
-        )
-    ), JSON_ARRAY()
-  ) AS formList,
+  COALESCE(FL.formList, JSON_ARRAY()) AS formList,
   (P.NumberOfShares * C.SharePrice) AS total
 FROM persons P
+JOIN DistinctNames DN ON P.ID = DN.ID
 LEFT JOIN fillinglinks F ON P.Personal_CIK = F.Personal_CIK
 LEFT JOIN company C ON P.Company_CIK = C.Company_CIK
+LEFT JOIN FormList FL ON P.Personal_CIK = FL.Personal_CIK
 WHERE P.WithName = 'Yes'
-GROUP BY P.ID, P.Personal_CIK, P.Name, C.Company_name, C.SharePrice, P.Bio, P.Company_CIK, P.Status;
+GROUP BY P.ID, P.Personal_CIK, DN.Name, P.NumberOfShares, C.SharePrice, P.Bio, P.Company_CIK, P.Status, FL.formList;
 `;
 
   connection.query(query, (error, results) => {
