@@ -59,6 +59,12 @@ export default function Home() {
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
   const [badDataPagination, setBadDataPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
+  const updateStatus = (id: string, newStatus: string) => {
+  setData((prevData) => prevData.map(item =>
+    item.id === id ? { ...item, status: newStatus } : item
+  ));
+};
+
   // Fetch data
   useEffect(() => {
     async function fetchData() {
@@ -93,7 +99,7 @@ export default function Home() {
 
   const table = useReactTable({
     data,
-    columns,
+    columns: columns(updateStatus),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),

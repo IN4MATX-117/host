@@ -49,7 +49,7 @@ import {
 } from "@/components/ui/tooltip"
 
 
-export const columns: ColumnDef<Info>[] = [
+export const columns = (updateStatus: (id: string, newStatus: string) => void): ColumnDef<Info>[] => [
     {
   accessorKey: "status",  // Make sure to use the correct key
   enableSorting: false,
@@ -59,6 +59,7 @@ export const columns: ColumnDef<Info>[] = [
 
     const handleChange = async (newStatus: string) => {
       setStatus(newStatus);
+      updateStatus(row.original.id, newStatus);
 
       // Send update request to the server
       const response = await fetch(`http://localhost:5000/api/update-status/${row.original.id}`, {
